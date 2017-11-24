@@ -24,7 +24,7 @@ void ReadMatches(const char *filename, FImage& outMat)
 }
 
 // prepare cost map from Structured Edge Detector
-void GetCostMap(char* imgName, FImage& outCostMap)
+void GetCostMap(char* imgName, char* modelName, FImage& outCostMap)
 {
 	cv::Mat cvImg1 = cv::imread(imgName);
 	int w = cvImg1.cols;
@@ -37,7 +37,7 @@ void GetCostMap(char* imgName, FImage& outCostMap)
 	int borderSize = 10;
 	cv::copyMakeBorder(fImg1, fImg1, borderSize, borderSize, borderSize, borderSize, cv::BORDER_REPLICATE);
 	cv::Mat edges(fImg1.size(), fImg1.type());
-	cv::Ptr<cv::ximgproc::StructuredEdgeDetection> sEdge = cv::ximgproc::createStructuredEdgeDetection("./model.yml.gz");
+	cv::Ptr<cv::ximgproc::StructuredEdgeDetection> sEdge = cv::ximgproc::createStructuredEdgeDetection(modelName);  //  ("./model.yml.gz");
 	sEdge->detectEdges(fImg1, edges);
 	// save result to FImage
 	for (int i = 0; i < h; i++){
@@ -59,7 +59,7 @@ void ReadEdges(char* fileName, FImage& edge)
 
 int main(int argc, char** argv)
 {
-	if (argc < 4){
+	if (argc < 5){
 		printf("USAGE: RIC image1 image2 inMatchText\n");
 		return -1;
 	}
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 	FImage matches, costMap;
 
 	img1.imread(argv[1]);
-	GetCostMap(argv[1], costMap);
+	GetCostMap(argv[1], argv[4], costMap);
 	img2.imread(argv[2]);
 
 // 	costMap.allocate(img1.width(), img1.height(), 1);
